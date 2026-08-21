@@ -2,7 +2,7 @@
 
 中文交付型 PRD 创建、评审、需求拆解和研发友好化 Skill。
 
-当前版本：`v0.1.0`
+当前版本：`v0.1.1`
 
 适用于产品、研发在 Git 代码库中协同，产品直接基于前端页面替代原型，研发基于前端页面和 PRD 完成业务开发、自测和上线的快速迭代工作流。
 
@@ -71,7 +71,7 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
 维护者发布新版本后，在团队群里同步：
 
 ```text
-PRD Skill 已更新到 v0.1.0，建议大家更新：
+PRD Skill 已更新到 v0.1.1，建议大家更新：
 帮我更新 PRD Skill https://github.com/huangdlvip/prd-delivery-skill/tree/main/skills/prd-delivery
 ```
 

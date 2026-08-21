@@ -1,0 +1,4 @@
+interface:
+  display_name: "PRD Delivery"
+  short_description: "Chinese delivery PRD writing and review assistant"
+  default_prompt: "Use $prd-delivery to draft or review a Chinese delivery-oriented PRD for codebase collaboration and AI Coding."

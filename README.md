@@ -27,29 +27,39 @@
 
 ## 安装
 
-将 `<OWNER>/<REPO>` 替换为实际 GitHub 仓库，例如 `yourname/prd-delivery-skill`。
+在 Codex 里直接对 Agent 说：
 
-```bash
-python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo <OWNER>/<REPO> \
-  --path skills/prd-delivery
+```text
+帮我安装 PRD Skill https://github.com/huangdlvip/prd-delivery-skill/tree/main/skills/prd-delivery
 ```
 
-安装后，在新的 Codex 对话中即可使用：
+Agent 会使用内置 `skill-installer` 安装这个 Skill。安装完成后，开启新的 Codex 对话即可使用：
 
 ```text
 使用 prd-delivery 帮我写一个 xxx 需求的 PRD
 ```
 
+也可以手动执行：
+
+```bash
+python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
+  --url https://github.com/huangdlvip/prd-delivery-skill/tree/main/skills/prd-delivery
+```
+
 ## 更新
 
-当前安装器在目标 Skill 已存在时会中止。团队成员更新时，先删除本地旧版本，再重新安装：
+在 Codex 里直接对 Agent 说：
+
+```text
+帮我更新 PRD Skill https://github.com/huangdlvip/prd-delivery-skill/tree/main/skills/prd-delivery
+```
+
+如果 Agent 提示本地已存在旧版本，可以让 Agent 删除旧版后重新安装。手动更新方式：
 
 ```bash
 rm -rf ~/.codex/skills/prd-delivery
 python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo <OWNER>/<REPO> \
-  --path skills/prd-delivery
+  --url https://github.com/huangdlvip/prd-delivery-skill/tree/main/skills/prd-delivery
 ```
 
 ## 仓库结构
@@ -64,4 +74,3 @@ skills/prd-delivery/
     ├── release-plan.md
     └── spec-writing.md
 ```
-

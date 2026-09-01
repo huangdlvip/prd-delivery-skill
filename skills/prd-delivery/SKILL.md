@@ -2,7 +2,7 @@
 name: prd-delivery
 description: 中文交付型 PRD 创建、评审、需求拆解和研发友好化 Skill。Use when the user needs to write or review PRDs in Chinese for Git codebase collaboration, frontend-page-as-prototype workflows, AI Coding handoff, SPEC-style functional requirements, launch acceptance, release planning, grey release, A/B testing, commercialization, risk management, business monitoring, running quality, or project context enrichment from authorized workflow/context Skills.
 metadata:
-  version: 0.1.1
+  version: 0.1.2
 ---
 
 # PRD Delivery
@@ -50,7 +50,7 @@ Ask the user before writing when any critical item is unclear:
 - Functional rules, permissions, state transitions, data source, input/output, or edge cases.
 - Existing project capabilities that should be reused, if any. Decide what to reuse from the actual requirement and project context; do not force fixed categories.
 - Data tracking events, tracking fields, usage purpose, or success indicators.
-- Release method, hit rules, grey/A/B observation signals, rollout/pause/offline/rollback standards, or operations collaboration.
+- Release method, hit rules, grey/A/B observation signals, rollout/pause/offline/rollback standards, or operations collaboration. Do not decide whether launch is full rollout, grey release, or A/B test without product confirmation.
 - Commercialization rules, if the requirement affects commercialization.
 Use concise questions and group them by decision impact. Do not ask about every empty template field. Do not ask the product owner to confirm facts that can be reasonably checked through the codebase or authorized project-context Skill first.
 
@@ -95,6 +95,7 @@ After blocking questions are resolved, output only the product scheme for confir
 Rules:
 
 - The product scheme must clearly answer: who the requirement serves, what user/business problem occurs in what scenario, and how the product solves it.
+- The requirement background must explain why the requirement exists before describing how to build it: current situation, existing pain point or problem, why it needs to be solved now, and the expected value after launch.
 - This stage may be iterative. Help the product owner explore alternatives, tradeoffs, scope boundaries, and assumptions until the scheme reaches consensus.
 - Do not output the feature requirement list before the product owner confirms or adjusts the product scheme.
 - Do not call this output a PRD, PRD 草稿, 未确认草稿, or v0.
@@ -113,6 +114,10 @@ After the product scheme reaches consensus, output only the feature requirement 
 Rules:
 
 - Include confirmed associated functional modules when the requirement extends to them.
+- For AI Coding handoff, split the feature list by independently deliverable implementation units, not by page copy or visual sections alone. Prefer modules that each have a clear user entry or trigger, state/data dependency, business rule boundary, input/output, edge cases, and acceptance criteria.
+- Keep one feature module focused on one primary responsibility. Separate entry/routing, configuration storage, permission/commercialization checks, data loading, AI analysis, list interactions, export/subscription/report-center linkage, and tracking/monitoring when they can be implemented or tested independently.
+- Mark each module's delivery form when scope may be confused: `真实能力`, `复用现有`, `前端占位`, `后续预留`, or another concise project-appropriate status. Do not mark placeholder or future-reserved capabilities as P0 deliverables.
+- If a page contains many analytical blocks, group them by data/API boundary and release value. Avoid forcing every card, chart, hover, or tooltip into a separate P0 module unless it has distinct business logic or independent acceptance risk.
 - If commercialization affects product behavior, include the required behavior in the feature list, such as rights check, usage limit, paywall, upgrade path, package difference, pricing display, order, payment, renewal, or user-flow-changing sales/operations/customer-service wording.
 - Put intentionally excluded associated modules in the product scheme's `本期不做什么`, not in the feature list.
 - If new questions appear while making the feature list, ask them before writing the PRD.
@@ -181,13 +186,18 @@ Skip project context enrichment when all of these are true:
 ## PRD Rules
 
 - Write in Chinese with a rigorous, direct, executable product-owner style.
+- In `文档信息` or `协同信息`, include the PRD document location in DWS/Feishu/Lark when available, and include the related project Git repository path. If either location is not available, mark it as `暂无` or `待补充` instead of omitting the field.
+- In the PRD revision history, write the reviser's account name from the related Git repository. Do not use generic labels such as `Codex`, `AI`, or role names when a Git account name is available.
+- `需求背景` must help reviewers quickly understand product value. It should cover: current situation, current pain point/problem, why the product needs to do this requirement, and what business/user benefit the change should bring. Do not start the background by describing the implementation plan or page interaction.
 - Treat the frontend page as the source of truth for visual design. Do not restate UI visuals already represented by the frontend page.
 - Use `页面关联` only to locate where the function maps to the frontend page: page path, page position, and relation.
 - Use `功能需求清单` for module-level overview only; use SPEC for detailed behavior.
+- When the downstream consumer is AI Coding, write the `功能需求清单` as an execution map: each row should map to a coherent coding task or closely related task group, include priority, delivery form, and important notes about dependency or scope. Split modules to reduce ambiguity for agents; merge only when two behaviors share the same data source, rule boundary, and acceptance path.
 - In SPEC, include `现有能力复用` only when the actual requirement or project context confirms reusable existing capability. The reused object is context-driven and may be logic, API, metric definition, permission, field, filter, export, job, report, config, module, or another existing capability.
 - Do not describe reused project logic as if it were newly designed. If reuse details are unclear and materially affect implementation, confirm through codebase/project context before writing the PRD; if nothing is reused, omit `现有能力复用`.
 - Do not require product owners to write technical constraints in the PRD. Only include implementation constraints when the user explicitly provides them or the codebase already makes them clear; label them as optional `实现约束（可选，研发/Agent补充）`.
 - Use `上线验收标准` for requirement-level release gates. Do not duplicate every module-level SPEC acceptance case.
+- `发布计划` must not assume full rollout, grey release, or A/B testing by default. If the release method is not explicitly confirmed, mark it as pending product confirmation and ask the product owner to choose before writing detailed hit rules, rollout steps, observation windows, or rollback thresholds.
 - Keep `商业化` lightweight. If the requirement affects commercialization, write the confirmed commercialization rules clearly; if it does not, omit the section or mark `不涉及`.
 - If commercialization affects product behavior, include the behavior in `功能需求清单` and SPEC. Use `商业化` only to summarize confirmed commercialization rules; it must not replace functional requirements for rights checks, paywalls, usage limits, upgrade paths, orders, payments, renewals, or package differences.
 - Mark unknowns as `待确认`; do not convert assumptions into facts.
@@ -200,6 +210,48 @@ Skip project context enrichment when all of these are true:
 - For every requirement, check only whether it extends to associated functional modules. Include confirmed associated modules in `功能需求清单`; put intentionally excluded associated modules in `本期不做什么`; ask the product owner to confirm unclear associated modules before writing the PRD.
 - Simple requirements may merge or omit irrelevant sections, but must not omit information that affects implementation, acceptance, release, business monitoring, running quality, or business wording.
 - When project context is used, include only the product-relevant conclusions in the PRD. Keep raw diagnostics in interaction summaries, not in the PRD document.
+
+## Functional Decomposition For AI Coding
+
+Use this section when creating, reviewing, or rewriting feature requirement lists for AI Coding handoff.
+
+Good module boundaries:
+
+- Entry and routing: page entry display rules, click behavior, route parameters, fallback redirects.
+- Configuration and state: create/edit/delete/save/read rules, local or backend persistence, conflict handling, corrupted state handling.
+- Search and selection: search trigger, result selection, duplicate prevention, empty/error state, max limits.
+- Data initialization and loading: parameter priority, default values, API/data source dependency, loading/empty/error behavior.
+- Business calculation or ranking: metric definitions, sorting, filtering, candidate selection, tie-breaking, unsupported periods.
+- AI generation or analysis: prompt/input source, request trigger, response structure, loading/timeout/failure state, stale result handling after filters change.
+- Interaction components: expandable rows, dialogs, popovers, hover details, navigation anchors, state retention.
+- Permission/commercialization: rights checks, limits, upgrade/paywall/copy, failure and no-permission states.
+- Tracking and release validation: only events and metrics required to evaluate the requirement goal, diagnose funnel problems, or verify rollout quality.
+
+Avoid these decomposition problems:
+
+- Splitting by every small UI element when the implementation shares the same state and acceptance path.
+- Mixing first-phase core flow with future placeholder capabilities in the same P0 module.
+- Combining unrelated backend/API, frontend interaction, AI generation, and tracking changes into one broad module.
+- Writing modules that cannot be tested because they lack input/output, state transition, edge case, or acceptance criteria.
+- Leaving downstream surfaces such as export, saved conditions, subscriptions, dashboards, permissions, search, notifications, operations tools, customer-service or sales workflows unclassified as in-scope, out-of-scope, or pending confirmation.
+
+## Data Tracking Principles
+
+Data tracking should be derived from the requirement goal, not from a desire to track every user operation.
+
+Before adding any event, answer all three questions. If any answer is no or unclear, do not add the event:
+
+- Will product owners actually look at this data after launch?
+- Can this data help answer a concrete business or product question?
+- Without this event, would the team be unable to evaluate requirement effectiveness, locate a key problem, or understand important user behavior?
+
+Tracking design should focus on:
+
+- Goal validation: events and metrics that prove whether the requirement achieved its intended outcome.
+- Problem diagnosis: events that locate where a core funnel, state transition, data load, AI result, permission check, or release guard failed.
+- Behavior understanding: events that explain meaningful user choices related to the product decision, not incidental hovers or clicks with no planned analysis.
+
+For each retained event, include trigger timing, required fields, field enums where applicable, and the business question it answers. Remove low-value events whose purpose is only "observe usage" without a decision or analysis plan.
 
 ## Frontend Design Reverse Check
 
@@ -227,7 +279,9 @@ When reviewing an existing PRD, lead with concrete findings:
 - Missing or unclear `现有能力复用` when actual requirement or project context shows an existing capability should be reused.
 - Missing business rules, input/output, edge cases, or GIVEN/WHEN/THEN acceptance.
 - Duplicated or vague acceptance standards.
-- Missing data tracking, release strategy, grey/A/B observation signals, rollout criteria, or rollback criteria.
+- Data tracking is missing, over-collected, or not tied to requirement goals; events lack a real analysis question, required fields, enums, or usage plan.
+- Release method is assumed instead of confirmed with product, especially whether the requirement should launch by full rollout, grey release, or A/B test.
+- Missing release strategy, grey/A/B observation signals, rollout criteria, or rollback criteria.
 - Commercialization wording risk.
 - Missing key launch/business-running risks, dependencies, or unresolved blocking questions.
 - Missing use of available project context when system logic, online behavior, logs, or running data would materially affect the product scheme or requirement design.

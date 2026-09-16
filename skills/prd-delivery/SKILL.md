@@ -2,7 +2,7 @@
 name: prd-delivery
 description: 中文交付型 PRD 创建、评审、需求拆解和研发友好化 Skill。Use when the user needs to write or review PRDs in Chinese for Git codebase collaboration, frontend-page-as-prototype workflows, AI Coding handoff, SPEC-style functional requirements, launch acceptance, release planning, grey release, A/B testing, commercialization, risk management, business monitoring, running quality, or project context enrichment from authorized workflow/context Skills.
 metadata:
-  version: 0.1.2
+  version: 0.1.3
 ---
 
 # PRD Delivery
@@ -198,6 +198,7 @@ Skip project context enrichment when all of these are true:
 - Do not require product owners to write technical constraints in the PRD. Only include implementation constraints when the user explicitly provides them or the codebase already makes them clear; label them as optional `实现约束（可选，研发/Agent补充）`.
 - Use `上线验收标准` for requirement-level release gates. Do not duplicate every module-level SPEC acceptance case.
 - `发布计划` must not assume full rollout, grey release, or A/B testing by default. If the release method is not explicitly confirmed, mark it as pending product confirmation and ask the product owner to choose before writing detailed hit rules, rollout steps, observation windows, or rollback thresholds.
+- `数据埋点` and `上线观测指标` must serve two directions: `用户观测` for understanding user needs and guiding later iteration, and `价值观测` for evaluating whether the feature is valuable enough to scale, continue iterating, adjust, or remove. Each event and metric must be labeled with one or both directions.
 - Keep `商业化` lightweight. If the requirement affects commercialization, write the confirmed commercialization rules clearly; if it does not, omit the section or mark `不涉及`.
 - If commercialization affects product behavior, include the behavior in `功能需求清单` and SPEC. Use `商业化` only to summarize confirmed commercialization rules; it must not replace functional requirements for rights checks, paywalls, usage limits, upgrade paths, orders, payments, renewals, or package differences.
 - Mark unknowns as `待确认`; do not convert assumptions into facts.
@@ -245,13 +246,42 @@ Before adding any event, answer all three questions. If any answer is no or uncl
 - Can this data help answer a concrete business or product question?
 - Without this event, would the team be unable to evaluate requirement effectiveness, locate a key problem, or understand important user behavior?
 
+Every retained event must belong to at least one of these two observation directions:
+
+- `用户观测`: understand who uses the feature, which scenarios and capabilities they need, where they stop or fail, what they choose, and what problems should guide the next iteration.
+- `价值观测`: evaluate whether the feature is used successfully and repeatedly, whether it improves the target outcome, and whether the value is sufficient to justify scaling, continued iteration, adjustment, or removal.
+
 Tracking design should focus on:
 
 - Goal validation: events and metrics that prove whether the requirement achieved its intended outcome.
 - Problem diagnosis: events that locate where a core funnel, state transition, data load, AI result, permission check, or release guard failed.
 - Behavior understanding: events that explain meaningful user choices related to the product decision, not incidental hovers or clicks with no planned analysis.
 
-For each retained event, include trigger timing, required fields, field enums where applicable, and the business question it answers. Remove low-value events whose purpose is only "observe usage" without a decision or analysis plan.
+For each retained event, include:
+
+- Observation direction: `用户观测` or `价值观测`, and whether it serves both.
+- Trigger timing and event definition.
+- Required fields and field enums where applicable.
+- The business or product question it answers.
+- The follow-up decision or action the result may support.
+
+Prefer a small set of events that can form a meaningful funnel or outcome comparison. Remove low-value events whose purpose is only "observe usage" without a decision or analysis plan. Do not treat every hover, click, expand, or page exposure as worth tracking.
+
+## Launch Observation Metrics
+
+For every requirement that needs post-launch evaluation, define observation metrics in two groups:
+
+- `用户观测指标`: usage audience, entry reach, activation or completion funnel, capability adoption, repeated use, key drop-off points, failure reasons, and meaningful preference or selection distribution. These metrics answer what users need and what should be improved next.
+- `价值观测指标`: target outcome completion, conversion or efficiency improvement, retention or repeat use where relevant, downstream behavior, user feedback or complaint signals, and comparison against baseline/control where applicable. These metrics answer whether the feature should be scaled, iterated, adjusted, paused, or removed.
+
+Each observation metric must include:
+
+- Metric definition and calculation口径.
+- Observation population, time window, and comparison baseline when applicable.
+- Expected direction or threshold if one is known.
+- Decision mapping: what result supports `放大`, `持续迭代`, `调整/暂停`, or `下架`.
+
+Do not list generic metrics such as page views, click counts, or error counts unless they answer a concrete user or value question. Technical health signals may be included separately as release guardrails, but they cannot replace user observation or value observation.
 
 ## Frontend Design Reverse Check
 
@@ -280,6 +310,7 @@ When reviewing an existing PRD, lead with concrete findings:
 - Missing business rules, input/output, edge cases, or GIVEN/WHEN/THEN acceptance.
 - Duplicated or vague acceptance standards.
 - Data tracking is missing, over-collected, or not tied to requirement goals; events lack a real analysis question, required fields, enums, or usage plan.
+- Data tracking or launch observation metrics do not distinguish `用户观测` from `价值观测`, or do not map results to subsequent product decisions.
 - Release method is assumed instead of confirmed with product, especially whether the requirement should launch by full rollout, grey release, or A/B test.
 - Missing release strategy, grey/A/B observation signals, rollout criteria, or rollback criteria.
 - Commercialization wording risk.

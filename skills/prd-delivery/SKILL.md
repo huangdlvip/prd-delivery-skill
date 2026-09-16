@@ -2,7 +2,7 @@
 name: prd-delivery
 description: 中文交付型 PRD 创建、评审、需求拆解和研发友好化 Skill。Use when the user needs to write or review PRDs in Chinese for Git codebase collaboration, frontend-page-as-prototype workflows, AI Coding handoff, SPEC-style functional requirements, launch acceptance, release planning, grey release, A/B testing, commercialization, risk management, business monitoring, running quality, or project context enrichment from authorized workflow/context Skills.
 metadata:
-  version: 0.1.3
+  version: 0.1.4
 ---
 
 # PRD Delivery
